@@ -57,24 +57,24 @@ export class SoapService {
 
     }
 
-    private saveCustomer(user: any) {
-        createClientAsync('http://localhost:8080/ws/customers.wsdl', {
+    private async saveCustomer(user: any) {
+        return await createClientAsync('http://localhost:8080/ws/customers.wsdl', {
             wsdl_options: {
-                "disableCache": true,
-                "envelopekey": 'soapenv',
-                "attributeskey": `xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ejs="http://ejs.com.br"`
+                // "disableCache": true,
+                // "envelopekey": 'soapenv',
+                // "attributeskey": `xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ejs="http://ejs.com.br"`
             }
         
         })
-            .then((client: Client) => {
+            .then(async (client: Client) => {
                 client.wsdl.options.envelopeKey = 'soapenv';
                 client.wsdl.definitions.schemaXmlns.soapenv = 'http://schemas.xmlsoap.org/soap/envelope/'
-                client.wsdl.definitions.xmlns = { ['xmlns:ejs'] : 'http://ejs.com.br'}
-                console.log(client.wsdl.definitions)
+                // adicionar apenas uma fez, ao contrário toda vez adiciona novamente gerando erro 
+                client.wsdl.xmlnsInEnvelope = client.wsdl.xmlnsInEnvelope + ` xmlns:ejs="http://ejs.com.br"`
                 const soapHeader = '<wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" mustUnderstand="1"><wsse:UsernameToken><wsse:Username>ejs</wsse:Username><wsse:Password>123</wsse:Password></wsse:UsernameToken></wsse:Security>';
                 client.addSoapHeader(soapHeader);
                 
-                return new Promise<any>(resolve => {
+                return await new Promise<any>(resolve => {
                     return client['CustomerPortService']['CustomerPortSoap11']['SaveCustomerDetail'](user, (...arg) => {
                         console.log(client.lastRequest)
                         resolve(arg)
@@ -82,8 +82,9 @@ export class SoapService {
                 })
             }).then(response => {
                 console.log(response)
+
+                return response[1].CustomerDetail;
             })
-        return
     }
 
 
@@ -91,7 +92,7 @@ export class SoapService {
        return await this.invoke()
     }
 
-    public save(user: any){
-        return this.saveCustomer(user);
+    public async save(user: any){
+        return await this.saveCustomer(user);
     }
 }

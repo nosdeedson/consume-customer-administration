@@ -16,7 +16,7 @@ export class AppController {
   }
 
   @Post() 
-  saveCustomers() : string{
-    return this.appService.saveCustomers();
+  async saveCustomers() : Promise<string>{
+    return await this.appService.saveCustomers();
   }
 }

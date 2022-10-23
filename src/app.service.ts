@@ -15,7 +15,7 @@ export class AppService {
     return await this.soap.getAll();
   }
 
-  saveCustomers(): string {
+  async saveCustomers(): Promise<string> {
 
     let user = {
       "ejs:CustomerDetail": {
@@ -24,8 +24,6 @@ export class AppService {
         "ejs:phone": 11111111
       }
     }
-    this.soap.save(user);
-    const xml = json2xml(JSON.stringify(user), { compact: true })
-    return xml
+    return await this.soap.save(user);
   }
 }
