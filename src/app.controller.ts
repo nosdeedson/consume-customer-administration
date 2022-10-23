@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()
@@ -11,7 +11,12 @@ export class AppController {
   }
 
   @Get('soap')
-  getAll(): string{
-    return this.appService.getAllCustomers();
+  async getAll(): Promise<any>{
+    return await this.appService.getAllCustomers();
+  }
+
+  @Post() 
+  saveCustomers() : string{
+    return this.appService.saveCustomers();
   }
 }
