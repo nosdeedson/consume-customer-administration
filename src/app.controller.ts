@@ -19,4 +19,9 @@ export class AppController {
   async saveCustomers() : Promise<string>{
     return await this.appService.saveCustomers();
   }
+
+  @Get('criar-codigo-barras')
+  async criarCodigoBarras(): Promise<string>{
+    return await this.appService.criarCodigoBarras();
+  }
 }
